@@ -5,6 +5,7 @@ import (
 	"database/sql"
 	"time"
 
+	"github.com/go-playground/validator/v10"
 	"github.com/mnabil1718/go-restful-api/helper"
 	"github.com/mnabil1718/go-restful-api/model/domain"
 	"github.com/mnabil1718/go-restful-api/model/web"
@@ -14,6 +15,7 @@ import (
 type CategoryServiceImpl struct {
 	CategoryRepository repository.CategoryRepository
 	DB                 *sql.DB
+	Validate           *validator.Validate
 }
 
 func (service *CategoryServiceImpl) FindAll(ctx context.Context) []web.CategoryResponse {
@@ -31,7 +33,10 @@ func (service *CategoryServiceImpl) FindById(ctx context.Context, categoryId int
 	category := service.CategoryRepository.FindById(ctx, tx, categoryId)
 	return helper.ConvertCategoryToResponse(category)
 }
+
 func (service *CategoryServiceImpl) Create(ctx context.Context, request web.CategoryCreateRequest) web.CategoryResponse {
+	err := service.Validate.Struct(request)
+	helper.PanicIfError(err)
 	tx, err := service.DB.BeginTx(ctx, nil)
 	helper.PanicIfError(err)
 	defer helper.CommitOrRollback(tx)
@@ -42,7 +47,10 @@ func (service *CategoryServiceImpl) Create(ctx context.Context, request web.Cate
 	category = service.CategoryRepository.Save(ctx, tx, category)
 	return helper.ConvertCategoryToResponse(category)
 }
+
 func (service *CategoryServiceImpl) Update(ctx context.Context, request web.CategoryUpdateRequest) web.CategoryResponse {
+	err := service.Validate.Struct(request)
+	helper.PanicIfError(err)
 	tx, err := service.DB.BeginTx(ctx, nil)
 	helper.PanicIfError(err)
 	defer helper.CommitOrRollback(tx)
@@ -53,6 +61,7 @@ func (service *CategoryServiceImpl) Update(ctx context.Context, request web.Cate
 	category = service.CategoryRepository.Update(ctx, tx, category)
 	return helper.ConvertCategoryToResponse(category)
 }
+
 func (service *CategoryServiceImpl) Delete(ctx context.Context, categoryId int64) {
 	tx, err := service.DB.BeginTx(ctx, nil)
 	helper.PanicIfError(err)
