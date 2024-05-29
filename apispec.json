@@ -1,0 +1,375 @@
+{
+  "openapi": "3.0.2",
+  "info": {
+    "title": "Category RESTful API",
+    "description": "API Spec for Category RESTful API",
+    "version": "1.0"
+  },
+  "servers": [{ "url": "http://localhost:8080/api/v1" }],
+  "paths": {
+    "/categories": {
+      "get": {
+        "security": [
+          {
+            "CategoryAuth": []
+          }
+        ],
+        "tags": ["Categories"],
+        "description": "Lists all active categories",
+        "responses": {
+          "200": {
+            "description": "Success lists all active categories",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "integer"
+                    },
+                    "status": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "$ref": "#/components/schemas/categoryList"
+                    }
+                  }
+                },
+                "examples": {
+                  "successResponse": {
+                    "$ref": "#/components/examples/get_categories_response"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "security": [
+          {
+            "CategoryAuth": []
+          }
+        ],
+        "tags": ["Categories"],
+        "description": "Create new category",
+        "requestBody": {
+          "description": "Request create new category",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/categoryRequest"
+              },
+              "examples": {
+                "createDiy": {
+                  "$ref": "#/components/examples/post_category_request"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success creating new category",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "integer"
+                    },
+                    "status": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "$ref": "#/components/schemas/category"
+                    }
+                  }
+                },
+                "examples": {
+                  "postDiy": {
+                    "$ref": "#/components/examples/post_category_response"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/categories/{categoryId}": {
+      "get": {
+        "security": [
+          {
+            "CategoryAuth": []
+          }
+        ],
+        "tags": ["Categories"],
+        "description": "Get category by id",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/categoryId"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success get category by id",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/category"
+                },
+                "examples": {
+                  "getDiyCategory": {
+                    "$ref": "#/components/examples/post_category_response"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "security": [
+          {
+            "CategoryAuth": []
+          }
+        ],
+        "tags": ["Categories"],
+        "description": "Update category by id",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/categoryId"
+          }
+        ],
+        "requestBody": {
+          "description": "Request body update category",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/categoryRequest"
+              },
+              "examples": {
+                "updateDiy": {
+                  "$ref": "#/components/examples/put_category_request"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success update category by id",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/category"
+                },
+                "examples": {
+                  "getDiyCategory": {
+                    "$ref": "#/components/examples/put_category_response"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "security": [
+          {
+            "CategoryAuth": []
+          }
+        ],
+        "tags": ["Categories"],
+        "description": "Delete category by id",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/categoryId"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success delete category by id",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "integer"
+                    },
+                    "status": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "examples": {
+                  "deleteDiy": {
+                    "$ref": "#/components/examples/delete_category_response"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "categoryList": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/category"
+        }
+      },
+      "category": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 100
+          },
+          "is_active": {
+            "type": "boolean",
+            "default": true
+          }
+        }
+      },
+      "categoryRequest": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 100,
+            "nullable": false
+          },
+          "is_active": {
+            "type": "boolean",
+            "default": true
+          }
+        }
+      },
+      "noData": {
+        "type": "object",
+        "properties": {}
+      }
+    },
+    "requestBodies": {
+      "post_request": {
+        "description": "Request body for create category",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/categoryRequest"
+            },
+            "examples": {
+              "postCategoryRequest": {
+                "$ref": "#/components/examples/post_category_request"
+              }
+            }
+          }
+        }
+      }
+    },
+    "examples": {
+      "get_categories_response": {
+        "summary": "Get all",
+        "value": {
+          "code": 200,
+          "status": "success",
+          "data": [
+            {
+              "id": 1,
+              "name": "Electronics",
+              "is_active": true
+            },
+            {
+              "id": 2,
+              "name": "Gardening",
+              "is_active": true
+            },
+            {
+              "id": 3,
+              "name": "Cosmetics",
+              "is_active": false
+            }
+          ]
+        }
+      },
+      "post_category_response": {
+        "summary": "Create DIY",
+        "value": {
+          "code": 200,
+          "status": "success",
+          "data": {
+            "id": 1,
+            "name": "DIY",
+            "is_active": true
+          }
+        }
+      },
+      "delete_category_response": {
+        "summary": "Delete DIY",
+        "value": {
+          "code": 200,
+          "status": "success"
+        }
+      },
+      "put_category_response": {
+        "summary": "Update DIY",
+        "value": {
+          "code": 200,
+          "status": "success",
+          "data": {
+            "id": 1,
+            "name": "D.I.Y",
+            "is_active": true
+          }
+        }
+      },
+      "post_category_request": {
+        "summary": "Create DIY",
+        "value": {
+          "name": "DIY",
+          "is_active": true
+        }
+      },
+      "put_category_request": {
+        "summary": "Update DIY",
+        "value": {
+          "name": "D.I.Y",
+          "is_active": true
+        }
+      }
+    },
+    "parameters": {
+      "categoryId": {
+        "name": "categoryId",
+        "description": "Category Id",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "integer",
+          "nullable": false
+        }
+      }
+    },
+    "securitySchemes": {
+      "CategoryAuth": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "X-API-Key",
+        "description": "Authentication key for category API"
+      }
+    }
+  }
+}
