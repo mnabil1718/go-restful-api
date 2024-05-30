@@ -8,9 +8,23 @@ import (
 	"github.com/mnabil1718/go-restful-api/helper"
 )
 
-func NewDB() *sql.DB {
+type DBEnv int
+
+// enums passed in as DB env
+const (
+	Dev DBEnv = iota
+	Test
+)
+
+func NewDB(env DBEnv) *sql.DB {
 	// connection string format: postgres://username:password@localhost:5432/database_name
-	db, err := sql.Open("pgx", "postgres://mnabil:Cucibaju123@localhost:5432/go_restful")
+	var connString string = "postgres://mnabil:Cucibaju123@localhost:5432/go_restful" // DEV
+
+	if env == Test {
+		connString = "postgres://mnabil:Cucibaju123@localhost:5432/go_restful_test" // TEST
+	}
+
+	db, err := sql.Open("pgx", connString)
 	helper.PanicIfError(err)
 
 	db.SetMaxIdleConns(5)
@@ -19,5 +33,4 @@ func NewDB() *sql.DB {
 	db.SetConnMaxLifetime(1 * time.Hour)
 
 	return db
-
 }
