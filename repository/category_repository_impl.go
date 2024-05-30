@@ -11,6 +11,10 @@ import (
 type CategoryRepositoryImpl struct {
 }
 
+func NewCategoryRepository() CategoryRepository {
+	return &CategoryRepositoryImpl{}
+}
+
 func (repository *CategoryRepositoryImpl) FindAll(ctx context.Context, tx *sql.Tx) []domain.Category {
 	SQL := "SELECT id, name, is_active, created_at, updated_at FROM categories"
 	categories := []domain.Category{}
@@ -44,8 +48,8 @@ func (repository *CategoryRepositoryImpl) Save(ctx context.Context, tx *sql.Tx, 
 }
 
 func (repository *CategoryRepositoryImpl) Update(ctx context.Context, tx *sql.Tx, category domain.Category) domain.Category {
-	SQL := "UPDATE categories SET name=$1,is_active=$2,updated_at=$3) RETURNING id, name, is_active, created_at, updated_at"
-	err := tx.QueryRowContext(ctx, SQL, category.Name, category.IsActive, category.UpdatedAt).Scan(&category.Id, &category.Name, &category.IsActive, &category.CreatedAt, &category.UpdatedAt)
+	SQL := "UPDATE categories SET name=$1,is_active=$2,updated_at=$3 WHERE id=$4 RETURNING id, name, is_active, created_at, updated_at"
+	err := tx.QueryRowContext(ctx, SQL, category.Name, category.IsActive, category.UpdatedAt, category.Id).Scan(&category.Id, &category.Name, &category.IsActive, &category.CreatedAt, &category.UpdatedAt)
 	helper.PanicIfError(err)
 	return category
 }

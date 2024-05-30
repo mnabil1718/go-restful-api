@@ -7,13 +7,7 @@ import (
 	"github.com/mnabil1718/go-restful-api/model/web"
 )
 
-func BuildWebResponse(writer http.ResponseWriter, data any, contentType string) {
-	response := web.WebResponse{
-		Code:   200,
-		Status: "OK",
-		Data:   data,
-	}
-
+func WriteToResponseJSON(writer http.ResponseWriter, contentType string, httpStatusCode int, response web.WebResponse) {
 	writer.WriteHeader(http.StatusOK)
 	writer.Header().Add("Content-Type", contentType)
 	encoder := json.NewEncoder(writer)
