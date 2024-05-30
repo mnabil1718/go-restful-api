@@ -3,6 +3,7 @@ package repository
 import (
 	"context"
 	"database/sql"
+	"errors"
 
 	"github.com/mnabil1718/go-restful-api/helper"
 	"github.com/mnabil1718/go-restful-api/model/domain"
@@ -32,12 +33,14 @@ func (repository *CategoryRepositoryImpl) FindAll(ctx context.Context, tx *sql.T
 	return categories
 }
 
-func (repository *CategoryRepositoryImpl) FindById(ctx context.Context, tx *sql.Tx, categoryId int64) domain.Category {
+func (repository *CategoryRepositoryImpl) FindById(ctx context.Context, tx *sql.Tx, categoryId int64) (domain.Category, error) {
 	SQL := "SELECT id, name, is_active, created_at, updated_at FROM categories WHERE id = $1"
 	category := domain.Category{}
 	err := tx.QueryRowContext(ctx, SQL, categoryId).Scan(&category.Id, &category.Name, &category.IsActive, &category.CreatedAt, &category.UpdatedAt)
-	helper.PanicIfError(err)
-	return category
+	if err != nil {
+		return category, errors.New("category not found")
+	}
+	return category, nil
 }
 
 func (repository *CategoryRepositoryImpl) Save(ctx context.Context, tx *sql.Tx, category domain.Category) domain.Category {

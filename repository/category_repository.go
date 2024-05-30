@@ -11,7 +11,7 @@ import (
 // handled by httprouter error handler
 type CategoryRepository interface {
 	FindAll(ctx context.Context, tx *sql.Tx) []domain.Category
-	FindById(ctx context.Context, tx *sql.Tx, categoryId int64) domain.Category
+	FindById(ctx context.Context, tx *sql.Tx, categoryId int64) (domain.Category, error)
 	Save(ctx context.Context, tx *sql.Tx, category domain.Category) domain.Category
 	Update(ctx context.Context, tx *sql.Tx, category domain.Category) domain.Category
 	Delete(ctx context.Context, tx *sql.Tx, category domain.Category)

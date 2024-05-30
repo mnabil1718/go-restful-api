@@ -8,7 +8,7 @@ import (
 )
 
 func WriteToResponseJSON(writer http.ResponseWriter, contentType string, httpStatusCode int, response web.WebResponse) {
-	writer.WriteHeader(http.StatusOK)
+	writer.WriteHeader(httpStatusCode)
 	writer.Header().Add("Content-Type", contentType)
 	encoder := json.NewEncoder(writer)
 	err := encoder.Encode(response)

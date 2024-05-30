@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/go-playground/validator/v10"
+	"github.com/mnabil1718/go-restful-api/exception"
 	"github.com/mnabil1718/go-restful-api/helper"
 	"github.com/mnabil1718/go-restful-api/model/domain"
 	"github.com/mnabil1718/go-restful-api/model/web"
@@ -38,7 +39,10 @@ func (service *CategoryServiceImpl) FindById(ctx context.Context, categoryId int
 	tx, err := service.DB.BeginTx(ctx, nil)
 	helper.PanicIfError(err)
 	defer helper.CommitOrRollback(tx)
-	category := service.CategoryRepository.FindById(ctx, tx, categoryId)
+	category, err := service.CategoryRepository.FindById(ctx, tx, categoryId)
+	if err != nil {
+		panic(exception.NewNotFoundError(err.Error()))
+	}
 	return helper.ConvertCategoryToResponse(category)
 }
 
@@ -62,7 +66,10 @@ func (service *CategoryServiceImpl) Update(ctx context.Context, request web.Cate
 	tx, err := service.DB.BeginTx(ctx, nil)
 	helper.PanicIfError(err)
 	defer helper.CommitOrRollback(tx)
-	category := service.CategoryRepository.FindById(ctx, tx, request.Id)
+	category, err := service.CategoryRepository.FindById(ctx, tx, request.Id)
+	if err != nil {
+		panic(exception.NewNotFoundError(err.Error()))
+	}
 	category.Name = request.Name
 	category.IsActive = request.IsActive
 	category.UpdatedAt.Time = time.Now()
@@ -74,6 +81,9 @@ func (service *CategoryServiceImpl) Delete(ctx context.Context, categoryId int64
 	tx, err := service.DB.BeginTx(ctx, nil)
 	helper.PanicIfError(err)
 	defer helper.CommitOrRollback(tx)
-	category := service.CategoryRepository.FindById(ctx, tx, categoryId)
+	category, err := service.CategoryRepository.FindById(ctx, tx, categoryId)
+	if err != nil {
+		panic(exception.NewNotFoundError(err.Error()))
+	}
 	service.CategoryRepository.Delete(ctx, tx, category)
 }
