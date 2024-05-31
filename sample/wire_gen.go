@@ -10,8 +10,8 @@ package sample
 
 // to generate code run: wire gen module_name/package_name
 // package name should be where the injector file lives
-func InitializeService() (*SampleService, error) {
-	sampleRepository := NewSampleRepository()
+func InitializeService(isError bool) (*SampleService, error) {
+	sampleRepository := NewSampleRepository(isError)
 	sampleService, err := NewSampleService(sampleRepository)
 	if err != nil {
 		return nil, err

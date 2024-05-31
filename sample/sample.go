@@ -6,8 +6,8 @@ type SampleRepository struct {
 	Error bool
 }
 
-func NewSampleRepository() *SampleRepository {
-	return &SampleRepository{true}
+func NewSampleRepository(isError bool) *SampleRepository {
+	return &SampleRepository{isError}
 }
 
 type SampleService struct {
