@@ -34,7 +34,7 @@ func setupRouter(db *sql.DB) http.Handler {
 	categoryController := controller.NewCategoryController(categoryService)
 
 	apiV1Path := "/api/v1"
-	router := app.NewRouter(categoryController, apiV1Path)
+	router := app.NewRouter(categoryController, app.RootPath(apiV1Path))
 
 	return middleware.NewAuthMiddleware(router)
 }

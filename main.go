@@ -1,32 +1,31 @@
 package main
 
 import (
-	"net/http"
-
 	"github.com/go-playground/validator/v10"
 	"github.com/mnabil1718/go-restful-api/app"
-	"github.com/mnabil1718/go-restful-api/controller"
 	"github.com/mnabil1718/go-restful-api/helper"
-	"github.com/mnabil1718/go-restful-api/middleware"
-	"github.com/mnabil1718/go-restful-api/repository"
-	"github.com/mnabil1718/go-restful-api/service"
 )
 
 func main() {
 
-	db := app.NewDB(app.Dev)
-	validate := validator.New()
-	categoryRepository := repository.NewCategoryRepository()
-	categoryService := service.NewCategoryService(categoryRepository, db, validate)
-	categoryController := controller.NewCategoryController(categoryService)
+	// ============ DEPENDENCY INJECTION
+	// validator.Option is recommended by the docs: https://pkg.go.dev/github.com/go-playground/validator/v10#section-readme
+	server := InitializeServer(app.Dev, app.RootPath("/api/v1"), app.AddressURL("localhost:8080"), validator.WithRequiredStructEnabled())
 
-	apiV1Path := "/api/v1"
-	router := app.NewRouter(categoryController, apiV1Path)
+	// ============ WITHOUT DEPENDENCY INJECTION
+	// db := app.NewDB(app.Dev)
+	// validate := validator.New()
+	// categoryRepository := repository.NewCategoryRepository()
+	// categoryService := service.NewCategoryService(categoryRepository, db, validate)
+	// categoryController := controller.NewCategoryController(categoryService)
 
-	server := http.Server{
-		Addr:    "localhost:8080",
-		Handler: middleware.NewAuthMiddleware(router),
-	}
+	// apiV1Path := app.RootPath("/api/v1")
+	// router := app.NewRouter(categoryController, apiV1Path)
+
+	// server := http.Server{
+	// 	Addr:    "localhost:8080",
+	// 	Handler: middleware.NewAuthMiddleware(router),
+	// }
 
 	err := server.ListenAndServe()
 	helper.PanicIfError(err)
